@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from database.models import CustomUser,PersonalInformation,IncomeAndDomicileInfo,EligibilityInfo,BankInformation,ResidentialInfo,QualificationInfo,OtherInfo
+from database.models import CustomUser,SchemeDetails,PersonalInformation,IncomeAndDomicileInfo,EligibilityInfo,BankInformation,ResidentialInfo,QualificationInfo,OtherInfo
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 
@@ -54,53 +54,77 @@ class OtherInfoSerializer(serializers.ModelSerializer):
 		model = OtherInfo
 		# fields = "__all__"  
 		exclude = ('user',)
-
+  
+class SchemeDetailsSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = SchemeDetails
+  
+		# fields = "__all__" 
+		exclude = ('user',)
 #user Serializer
 class UserSerializer(serializers.ModelSerializer):
-    UserPersonalInfo = PersonalInformationSerializer()
-    CustomUserIncomeAndDomicileInfo = IncomeAndDomicileInfoSerializer()
-    CustomUsereligibilityInfo = EligibilityInfoSerializer()
-    CustomUserBankInfo = BankInformationSerializer()
-    CustomUserResidentialInfo = ResidentialInfoSerializer()
-    CustomUserQualificationInfo = QualificationInfoSerializer()
-    CustomUserOtherInfo = OtherInfoSerializer()
-    class Meta:
-        model = CustomUser
-        fields = ("id","uniqueId","name","username","emailId","phoneNumber","address","dob","isDelete","createdDate","updatedDate","aadharLastDigits","haveCasteCertificate","caste","subCaste","casteCertificate","safaiKarmchariId","state","district","taluka","village","UserPersonalInfo","CustomUserIncomeAndDomicileInfo","CustomUsereligibilityInfo","CustomUserBankInfo","CustomUserResidentialInfo","CustomUserQualificationInfo","CustomUserOtherInfo")
-        
+
+	casteCertificateimage = serializers.ImageField(allow_null=True)
+	safaiKarmchariCertificateimage = serializers.ImageField(allow_null=True)
+
+	class Meta:
+		model = CustomUser
+		# fields = ("id","name","username","emailId","phoneNumber","address","dob","isDelete","createdDate","updatedDate","aadharLastDigits","haveCasteCertificate","CasteName","SubCasteName","casteCertificateimage","safaiKarmchariCertificateimage","safaiKarmchariId","state","district","taluka","village")
+		fields = ("id","name","username","phoneNumber","address","dob","aadharLastDigits","haveCasteCertificate","CasteName","SubCasteName","casteCertificateimage","safaiKarmchariCertificateimage","havesafaiKarmchariId","safaiKarmchariId","state","district","taluka","village")
+
+		# fields = ("id","uniqueId","name","username","emailId","phoneNumber","address","dob","isDelete","createdDate","updatedDate","aadharLastDigits","haveCasteCertificate","caste","subCaste","casteCertificate","safaiKarmchariId","state","district","taluka","village","UserPersonalInfo","CustomUserIncomeAndDomicileInfo","CustomUsereligibilityInfo","CustomUserBankInfo","CustomUserResidentialInfo","CustomUserQualificationInfo","CustomUserOtherInfo","SchemeDetailsInfo")
+        # fields = ("id","uniqueId","name","username","emailId","phoneNumber","address","dob","isDelete","createdDate","updatedDate","aadharLastDigits","haveCasteCertificate","CasteName","SubCasteName","casteCertificate","safaiKarmchariCertificate","safaiKarmchariId","state","district","taluka","village")
+
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+
+	casteCertificateimage = serializers.ImageField(required=False,allow_empty_file=True,allow_null=True)
+	safaiKarmchariCertificateimage = serializers.ImageField(required=False,allow_empty_file=True,allow_null=True)
+
+	class Meta:
+		model = CustomUser
+		# fields = ("id","name","username","emailId","phoneNumber","address","dob","isDelete","createdDate","updatedDate","aadharLastDigits","haveCasteCertificate","CasteName","SubCasteName","casteCertificateimage","safaiKarmchariCertificateimage","safaiKarmchariId","state","district","taluka","village")
+		fields = ("name","username","phoneNumber","address","dob","aadharLastDigits","haveCasteCertificate","CasteName","SubCasteName","casteCertificateimage","safaiKarmchariCertificateimage","havesafaiKarmchariId","safaiKarmchariId","state","district","taluka","village")
+        # fields ="__all__"
+
+
+class UserViewSerializer(serializers.ModelSerializer):
+	UserPersonalInfo = PersonalInformationSerializer(many=True)
+	CustomUserIncomeAndDomicileInfo = IncomeAndDomicileInfoSerializer(many=True)
+	CustomUsereligibilityInfo = EligibilityInfoSerializer(many=True)
+	CustomUserBankInfo = BankInformationSerializer(many=True)
+	CustomUserResidentialInfo = ResidentialInfoSerializer(many=True)
+	CustomUserQualificationInfo = QualificationInfoSerializer(many=True)
+	CustomUserOtherInfo = OtherInfoSerializer(many=True)
+	class Meta:
+		model = CustomUser
+		fields = ("id","name","username","emailId","phoneNumber","address","dob","isDelete","createdDate","updatedDate","aadharLastDigits","haveCasteCertificate","CasteName","SubCasteName","casteCertificateimage","safaiKarmchariCertificateimage","safaiKarmchariId","state","district","taluka","village","UserPersonalInfo","CustomUserIncomeAndDomicileInfo","CustomUsereligibilityInfo","CustomUserBankInfo","CustomUserResidentialInfo","CustomUserQualificationInfo","CustomUserOtherInfo")
+
+
 # Register Serializer
 
 class RegisterSerializer(serializers.ModelSerializer):
-	UserPersonalInfo = PersonalInformationSerializer()
-	CustomUserIncomeAndDomicileInfo = IncomeAndDomicileInfoSerializer()
-	CustomUsereligibilityInfo = EligibilityInfoSerializer()
-	CustomUserBankInfo = BankInformationSerializer()
-	CustomUserResidentialInfo = ResidentialInfoSerializer()
-	CustomUserQualificationInfo = QualificationInfoSerializer()
-	CustomUserOtherInfo = OtherInfoSerializer()
+	# UserPersonalInfo = PersonalInformationSerializer()
+	# CustomUserIncomeAndDomicileInfo = IncomeAndDomicileInfoSerializer()
+	# CustomUsereligibilityInfo = EligibilityInfoSerializer()
+	# CustomUserBankInfo = BankInformationSerializer()
+	# CustomUserResidentialInfo = ResidentialInfoSerializer()
+	# CustomUserQualificationInfo = QualificationInfoSerializer()
+	# CustomUserOtherInfo = OtherInfoSerializer()
+	casteCertificateimage = serializers.ImageField(required=False,allow_empty_file=True,allow_null=True)
+	safaiKarmchariCertificateimage = serializers.ImageField(required=False,allow_empty_file=True,allow_null=True)
+
 	class Meta:
 		model = CustomUser
-		fields = ("uniqueId","name","username","password","emailId","phoneNumber","address","dob","isDelete","aadharLastDigits","haveCasteCertificate","caste","subCaste","casteCertificate","safaiKarmchariId","state","district","taluka","village","UserPersonalInfo","CustomUserIncomeAndDomicileInfo","CustomUsereligibilityInfo","CustomUserBankInfo","CustomUserResidentialInfo","CustomUserQualificationInfo","CustomUserOtherInfo")
+		fields = ("name","username","password","phoneNumber","address","dob","aadharLastDigits","haveCasteCertificate","CasteName","SubCasteName","casteCertificateimage","safaiKarmchariCertificateimage","havesafaiKarmchariId","safaiKarmchariId","state","district","taluka","village")
+
+		# fields = ("uniqueId","name","username","password","emailId","phoneNumber","address","dob","isDelete","aadharLastDigits","haveCasteCertificate","caste","subCaste","casteCertificate","safaiKarmchariId","state","district","taluka","village","UserPersonalInfo","CustomUserIncomeAndDomicileInfo","CustomUsereligibilityInfo","CustomUserBankInfo","CustomUserResidentialInfo","CustomUserQualificationInfo","CustomUserOtherInfo")
 		extra_kwargs = {'password':{'write_only':True}}
 	def create(self,validated_data):
-		UserPersonalInfo_data = validated_data.pop('UserPersonalInfo')
-		CustomUserIncomeAndDomicileInfo_data = validated_data.pop('CustomUserIncomeAndDomicileInfo')
-		CustomUsereligibilityInfo_data = validated_data.pop('CustomUsereligibilityInfo')
-		CustomUserBankInfo_data = validated_data.pop('CustomUserBankInfo')
-		CustomUserResidentialInfo_data = validated_data.pop('CustomUserResidentialInfo')
-		CustomUserQualificationInfo_data = validated_data.pop('CustomUserQualificationInfo')
-		CustomUserOtherInfo_data = validated_data.pop('CustomUserOtherInfo')
-		customuser = CustomUser.objects.create_user(uniqueId = validated_data['uniqueId'],username = validated_data['username'],password =validated_data['password'],name=validated_data['name'],emailId=validated_data["emailId"],phoneNumber= validated_data["phoneNumber"],address=validated_data["address"],dob=validated_data["dob"],isDelete=validated_data["isDelete"],aadharLastDigits=validated_data["aadharLastDigits"],haveCasteCertificate=validated_data["haveCasteCertificate"],caste=validated_data["caste"],subCaste=validated_data["subCaste"] ,casteCertificate = validated_data["casteCertificate"],safaiKarmchariId = validated_data["safaiKarmchariId"],state = validated_data["state"],district = validated_data["district"],taluka=validated_data["taluka"],village = validated_data["village"])
-		PersonalInformation.objects.create(user=customuser, **UserPersonalInfo_data)
-		IncomeAndDomicileInfo.objects.create(user=customuser, **CustomUserIncomeAndDomicileInfo_data)
-		EligibilityInfo.objects.create(user=customuser, **CustomUsereligibilityInfo_data)
-		ResidentialInfo.objects.create(user=customuser, **CustomUserResidentialInfo_data)
+		# customuser = CustomUser.objects.create_user(username = validated_data['username'],password =validated_data['password'],name=validated_data['name'],phoneNumber= validated_data["phoneNumber"],address=validated_data["address"],dob=validated_data["dob"],aadharLastDigits=validated_data["aadharLastDigits"],haveCasteCertificate=validated_data["haveCasteCertificate"],CasteName=validated_data["CasteName"],SubCasteName=validated_data["SubCasteName"],casteCertificateimage=validated_data["casteCertificateimage"],safaiKarmchariCertificateimage=validated_data["safaiKarmchariCertificateimage"],havesafaiKarmchariId=validated_data["havesafaiKarmchariId"],safaiKarmchariId=validated_data["safaiKarmchariId"],state = validated_data["state"],district = validated_data["district"],taluka=validated_data["taluka"],village = validated_data["village"])
+		customuser = CustomUser.objects.create_user(**validated_data)
 
-		BankInformation.objects.create(user=customuser, **CustomUserBankInfo_data)
-		QualificationInfo.objects.create(user=customuser, **CustomUserQualificationInfo_data)
-		OtherInfo.objects.create(user=customuser, **CustomUserOtherInfo_data)
-
-		# return customuser
 		return customuser
 
 	def validate(self, data):

@@ -1,8 +1,64 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser,BaseUserManager,PermissionsMixin
 from .managers import CustomUserManager
-
+# django.forms.fields.ImageField
 # Create your models here.
+from django.contrib.postgres.fields import JSONField
+ 
+# class Profile(models.Model):
+#     name = models.CharField(max_length=200)
+#     preferences = JSONField()
+ 
+#     def __str__(self):
+#         return self.name
+    
+    
+class Verticals(models.Model):
+    VerticalName = models.CharField(max_length=500,blank=True,null=True)
+    createdDate=models.DateTimeField(auto_now_add=True)
+    isActive=models.BooleanField(default=True)
+    isDeleted=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
+
+class JobType(models.Model):
+    JobName = models.CharField(max_length=500,blank=True,null=True)
+    vertical=models.ForeignKey(Verticals,on_delete=models.CASCADE,blank=True,null=True,related_name = 'nameOfJob')
+    JobDescription=models.TextField(max_length=500,blank=True,null=True)
+    TotalVacancy = models.CharField(max_length=10,blank=True,null=True)
+    StartDate = models.DateTimeField(blank=True,null=True)
+    EndDate = models.DateTimeField(blank=True,null=True)
+    createdDate=models.DateTimeField(auto_now_add=True)
+    isActive=models.BooleanField(default=True)
+    isDeleted=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
+
+
+class FormSubHeading(models.Model):
+    HeadingName = models.CharField(max_length=500,blank=True,null=True)
+    jobType=models.ForeignKey(JobType,on_delete=models.CASCADE,blank=True,null=True,related_name = 'nameOfHeading')
+    createdDate=models.DateTimeField(auto_now_add=True)
+    isActive=models.BooleanField(default=True)
+    isDeleted=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
+
+class FormOptions(models.Model):
+    OptionName = models.CharField(max_length=500,blank=True,null=True)
+    FormSubHeading=models.ForeignKey(FormSubHeading,on_delete=models.CASCADE,blank=True,null=True,related_name = 'nameOfFormSubHeading')
+    createdDate=models.DateTimeField(auto_now_add=True)
+    isActive=models.BooleanField(default=True)
+    isDeleted=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
+
+
+
 
 class Caste(models.Model):
 	casteName=models.CharField(max_length=255)
@@ -64,33 +120,57 @@ class Village(models.Model):
 
 
 class CustomUser(AbstractUser):
-    uniqueId=models.CharField(max_length=255,unique=True)
-    name=models.CharField(max_length=300,blank=True,null=True)
-    username=models.CharField(max_length=255,unique=True)
-    emailId=models.EmailField(max_length=255,blank=True,null=True)
-    phoneNumber=models.CharField(max_length=20,blank=True,null=True)
-    address=models.TextField(max_length=500,blank=True,null=True)
-    dob=models.DateField(blank=True,null=True)
-    isDelete=models.BooleanField(default=False)
-    createdDate=models.DateTimeField(auto_now_add=True)
-    updatedDate=models.DateTimeField(auto_now=True)
-    aadharLastDigits=models.CharField(max_length=10,blank=True,null=True)
-    haveCasteCertificate=models.BooleanField(default=False)
-    caste=models.ForeignKey(Caste,on_delete=models.CASCADE,blank=True,null=True,related_name = 'UserCaste')
-    subCaste=models.ForeignKey(SubCaste,on_delete=models.CASCADE,blank=True,null=True,related_name = 'UserSubcaste')
-    casteCertificate=models.CharField(max_length=100,blank=True,null=True)###
-    safaiKarmchariId=models.CharField(max_length=100,blank=True,null=True)###
-    state=models.ForeignKey(State,on_delete=models.CASCADE,blank=True,null=True,related_name = 'UserState')
-    district=models.ForeignKey(District,on_delete=models.CASCADE,blank=True,null=True,related_name = 'UserDistrict')
-    taluka=models.ForeignKey(Taluka,on_delete=models.CASCADE,blank=True,null=True,related_name = 'UserTaluka')
-    village=models.ForeignKey(Village,on_delete=models.CASCADE,blank=True,null=True,related_name = 'UserVillage')
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
-    objects = CustomUserManager()
-    def __unicode__(self):
-        return self.id
-    
+	uniqueId=models.CharField(max_length=255,blank=True,null=True)
+	name=models.CharField(max_length=300,blank=True,null=True)
+	departmenName=models.CharField(max_length=300,blank=True,null=True)
+	designation=models.CharField(max_length=300,blank=True,null=True)
+	username=models.CharField(max_length=255,unique=True)
+	emailId=models.EmailField(max_length=255,blank=True,null=True)
+	phoneNumber=models.CharField(max_length=20,blank=True,null=True)
+	address=models.TextField(max_length=500,blank=True,null=True)
+	rmDistricts = models.JSONField(null=True,blank=True)
+	dmDistrict = models.CharField(max_length=100,blank=True,null=True)
+	dob=models.DateField(blank=True,null=True)
+	isDelete=models.BooleanField(default=False)
+	createdDate=models.DateTimeField(auto_now_add=True)
+	updatedDate=models.DateTimeField(auto_now=True)
+	aadharLastDigits=models.CharField(max_length=15,blank=True,null=True)
+	haveCasteCertificate=models.BooleanField(default=False)
+	CasteName=models.CharField(max_length=50,blank=True,null=True)
+	SubCasteName=models.CharField(max_length=50,blank=True,null=True)
+	# phoneNumber=models.CharField(max_length=20,blank=True,null=True)
+	casteCertificateimage= models.ImageField(blank=True,null=True,upload_to ='casteCertificateimages/',default='')
+	havesafaiKarmchariId=models.BooleanField(default=False)
 
+	safaiKarmchariId=models.CharField(max_length=100,blank=True,null=True)
+	safaiKarmchariCertificateimage= models.ImageField(blank=True,null=True,upload_to ='safaiKarmchariCertificateimages/',default='')
+	state=models.CharField(max_length=50,blank=True,null=True)
+	district=models.CharField(max_length=50,blank=True,null=True)
+	taluka=models.CharField(max_length=50,blank=True,null=True)
+	village=models.CharField(max_length=50,blank=True,null=True)
+
+	USERNAME_FIELD = 'username'
+	REQUIRED_FIELDS = []
+	objects = CustomUserManager()
+	def __unicode__(self):
+		return self.id
+    
+class BeneficaryJobApplication(models.Model):
+    candidate=models.ForeignKey(CustomUser,on_delete=models.CASCADE,blank=True,null=True,related_name = 'candidateJob')
+    vertical=models.ForeignKey(Verticals,on_delete=models.CASCADE,blank=True,null=True,related_name = 'candidateVertical')
+    job=models.ForeignKey(JobType,on_delete=models.CASCADE,blank=True,null=True,related_name = 'candidateJobType')
+    formFields = models.JSONField()
+    OptionName = models.CharField(max_length=500,blank=True,null=True)
+    JobApplicationStatus=models.BooleanField(default=False)
+    ApplicationCheckedBy = models.ForeignKey(CustomUser,on_delete=models.CASCADE,blank=True,null=True,related_name = 'ApplicationCheckedBy')
+    ApplicationCheckDate = models.DateTimeField(blank=True,null=True)
+    CgmRemarks = models.CharField(max_length=500,blank=True,null=True)
+    createdDate=models.DateTimeField(auto_now_add=True)
+    isActive=models.BooleanField(default=True)
+    isDeleted=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
 class Otp(models.Model):
     otp = models.CharField(max_length=4,blank=True,null=True)
     createdDate = models.DateTimeField(auto_now_add=True)
@@ -116,15 +196,19 @@ class PersonalInformation(models.Model):
 	parentMobile=models.CharField(max_length=20,blank=True,null=True)
 	maritalStatus=models.BooleanField(blank=True,null=True)
 	photo=models.CharField(max_length=100,blank=True,null=True)
+
 	languages=models.CharField(max_length=500,blank=True,null=True)
-	caste=models.ForeignKey(Caste,on_delete=models.CASCADE,blank=True,null=True,related_name = 'PearsonalInfoCaste')
-	subCaste=models.ForeignKey(SubCaste,on_delete=models.CASCADE,blank=True,null=True,related_name = 'PearsonalInfoSubcaste')
+	caste=models.CharField(max_length=50,blank=True,null=True)
+	subCaste=models.CharField(max_length=50,blank=True,null=True)
+
+	# caste=models.ForeignKey(Caste,on_delete=models.CASCADE,blank=True,null=True,related_name = 'PearsonalInfoCaste')
+	# subCaste=models.ForeignKey(SubCaste,on_delete=models.CASCADE,blank=True,null=True,related_name = 'PearsonalInfoSubcaste')
 	haveCasteCertificate=models.BooleanField(blank=True,null=True)
 	isCasteCertificateFromAaple=models.BooleanField(blank=True,null=True)
 	casteCertificate=models.CharField(max_length=100,blank=True,null=True)###,blank=True,null=True
 	casteCertificateNumber=models.CharField(max_length=50,blank=True,null=True)
 	issueAuthority=models.CharField(max_length=100,blank=True,null=True)
-	district=models.ForeignKey(District,on_delete=models.CASCADE,blank=True,null=True,related_name = 'IssueDistrict')
+	district=models.CharField(max_length=100,blank=True,null=True)
 	issueDate=models.DateField(blank=True,null=True)
 
 	def __unicode__(self):
@@ -238,9 +322,9 @@ class OtherInfo(models.Model):
     isMotherSalaried=models.BooleanField(blank=True,null=True)
     motherOccupation=models.CharField(max_length=200,blank=True,null=True)
     readyToRelocateInMaharashtra=models.BooleanField(blank=True,null=True)
-    district1=models.ForeignKey(District,on_delete=models.CASCADE,blank=True,null=True,related_name = 'PreferDistrict1')
-    district2=models.ForeignKey(District,on_delete=models.CASCADE,blank=True,null=True,related_name = 'PreferDistrict2')
-    district3=models.ForeignKey(District,on_delete=models.CASCADE,blank=True,null=True,related_name = 'PreferDistrict3')
+    district1=models.CharField(max_length=200,blank=True,null=True)
+    district2=models.CharField(max_length=200,blank=True,null=True)
+    district3=models.CharField(max_length=200,blank=True,null=True)
     wheatherStayInCity=models.BooleanField(blank=True,null=True)
     wheatherStayInRural=models.BooleanField(blank=True,null=True)
 
@@ -249,6 +333,18 @@ class OtherInfo(models.Model):
 
 
 
-
+class SchemeDetails(models.Model):
+    user=models.ForeignKey(CustomUser,on_delete=models.CASCADE,blank=True,null=True,related_name = 'SchemeDetailsInfo')
+    schemeType = models.CharField(max_length=150,blank=True,null=True)
+    Type = models.CharField(max_length=150,blank=True,null=True)
+    LoanschemeName = models.CharField(max_length=150,blank=True,null=True)
+    LoansubSchemename = models.CharField(max_length=150,blank=True,null=True)
+    TrainingType = models.CharField(max_length=150,blank=True,null=True)
+    qualification = models.CharField(max_length=150,blank=True,null=True)
+    college = models.CharField(max_length=150,blank=True,null=True)
+    department = models.CharField(max_length=150,blank=True,null=True)
+    createdDate = models.DateTimeField(auto_now_add=True)
+    def __unicode__(self):
+        return self.id
 
 

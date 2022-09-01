@@ -12,7 +12,7 @@ class CustomUserManager(BaseUserManager):
         Create and save a User with the given phone and password.
         """
         if not username:
-            raise ValueError('The phone must be provided')
+            raise ValueError('The Username must be provided')
         # email = self.normalize_email(email)
         user = self.model(username=username, **extra_fields)
         user.is_staff = True

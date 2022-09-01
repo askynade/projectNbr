@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import pymysql
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-q^pxbf@cx6#4ql0!6#@&kl636nau69xmniyu-4rkoj95443(^x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,14 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'django_filters',
+    'rest_framework',
     'adminmodule',
     'applicant',
+    'cgm',
     'database',
     'knox',
     'drf_yasg',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,8 +59,39 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'projectnbr.urls'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOWED_ORIGINS = [
+    'https://nbr.vercel.app',
+    "http://localhost:8080",
+    "http://127.0.0.1:8000",
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ORIGIN_WHITELIST = [
+        'https://mmrda.herokuapp.com',
+       'https://nbr.vercel.app',
+]
+
+ROOT_URLCONF = 'projectnbr.urls'
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+  
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -77,6 +113,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 5,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    # 'DEFAULT_PARSER_CLASSES': (
+    #     # 'rest_framework.parsers.JSONParser',
+    #     # 'rest_framework.parsers.FormParser',
+    #     'rest_framework.parsers.MultiPartParser',
+    # ),
     
 }
 
@@ -90,14 +132,24 @@ REST_FRAMEWORK = {
 #     }
 # }
 
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'DbNbr',
+#        'USER': 'admin',
+#        'PASSWORD':'Insulated10*',
+#        'HOST':'database-2.cxt35h3oleim.ap-south-1.rds.amazonaws.com',
+#        'PORT': '3306',
+#    }
+# }
 DATABASES = {
    'default': {
-       'ENGINE': 'django.db.backends.mysql',
-       'NAME': 'DbNbr',
-       'USER': 'admin',
-       'PASSWORD':'Insulated10*',
-       'HOST':'database-2.cxt35h3oleim.ap-south-1.rds.amazonaws.com',
-       'PORT': '3306',
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'NAME': 'newDbNbr',
+       'USER': 'postgres',
+       'PASSWORD':'postgres',
+       'HOST' : 'nbrproject.cxt35h3oleim.ap-south-1.rds.amazonaws.com',
+       'PORT': '5432',
    }
 }
 AUTH_USER_MODEL = 'database.CustomUser'
@@ -138,7 +190,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+pymysql.version_info = (1, 4, 2, "final", 0)
+pymysql.install_as_MySQLdb()
