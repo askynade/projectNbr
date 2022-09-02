@@ -39,4 +39,4 @@ sqlparse==0.4.2
 tzdata==2022.1
 uritemplate==4.1.1
 urllib3==1.26.11
-backports.zoneinfo==0.2.1;python_version<"3.9"
+
