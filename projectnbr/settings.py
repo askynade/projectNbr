@@ -13,7 +13,7 @@ from threading import local
 import pymysql
 from pathlib import Path
 import os
-import django_heroku
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-q^pxbf@cx6#4ql0!6#@&kl636nau69xmniyu-4rkoj95443(^x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','projectnbr.herokuapp.com']
+ALLOWED_HOSTS = ['localhost','projectnbr.herokuapp.com','nbr.vercel.app']
 
 
 # Application definition
@@ -204,5 +204,3 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 pymysql.version_info = (1, 4, 2, "final", 0)
 pymysql.install_as_MySQLdb()
-
-django_heroku.settings(locals())
